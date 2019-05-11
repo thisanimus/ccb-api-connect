@@ -1,0 +1,21 @@
+{
+    "name": "Countrysidebible/ccb-api-connect",
+    "description": "A utility for interacting with the Church Community Builder API.",
+    "keywords": ["Church Community Builder", "ccb api", "php"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrew Hale",
+            "email": "hale.adh@gmail.com"
+        }
+    ],
+    "type": "project",
+    "require": {
+		"php": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "CCB\\": "src/"
+        }
+    }
+}
