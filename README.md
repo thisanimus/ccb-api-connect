@@ -6,7 +6,7 @@ Connect to the Church Community Builder API.  Use both GET and POST to interact 
 $ composer require countrysidebible/ccb-api-connect
 ```
 
-## Usage
+## Config
 To use, you need to define your CCB API credentials in an array with the following predefined key names.  You can define this array in your working file, or require it from a seperate config file.
 ```php
 $ccbConfig = [
@@ -15,15 +15,23 @@ $ccbConfig = [
     'url'  => 'https://YourChurchName.ccbchurch.com/api.php'
 ];
 ```
-After defining your CCB API credentials, define your namespace and class, specify:
-
-- Any query params as an associative array. 
-- Any curl data as an associative array.
-
-In this example, we are fetching an individual's profile using their login/password.
+## Creation
+Create a new CCB API instance by passing your API user creds to the \CCB\Api class.
 ```php
 
 $ccb = new \CCB\Api($ccbConfig['user'], $ccbConfig['password'], $ccbConfig['url']);
+
+```
+
+## Requests
+Make a request by passing parameters to the request method.  Specify:
+
+- Any query params as an associative array. 
+- Any curl data as an associative array.
+- The request type (GET/POST).
+
+In this example, we are requesting an individual's profile using their login/password.
+```php
 
 $query = [
 	'srv' => 'individual_profile_from_login_password'
