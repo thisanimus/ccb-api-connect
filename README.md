@@ -3,7 +3,7 @@ Connect to the Church Community Builder API.  Use both GET and POST to interact 
 
 ## Installation - Compser
 ```shell
-$ composer require countrysidebible/ccb-api-connect
+$ composer require thisanimus/ccb-api-connect
 ```
 
 ## Config

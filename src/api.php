@@ -4,7 +4,7 @@ namespace CCB;
 /**
  * Church Community Builder Api Wrapper
  *
- * @package countrysidebible/ccb-api-connect
+ * @package thisanimus/ccb-api-connect
  * @copyright Andrew Hale <hale.adh@@gmail.com>
  * @license DBADPL
  */
