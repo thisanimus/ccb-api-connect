@@ -5,9 +5,10 @@ namespace CCB;
  * Church Community Builder Api Wrapper
  *
  * @package thisanimus/ccb-api-connect
- * @copyright Andrew Hale <hale.adh@@gmail.com>
+ * @copyright Andrew Hale <hale.adh@gmail.com>
  * @license DBADPL
  */
+
 /**
  * Class Exception
  *
