@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace CCB;
 
 /**
@@ -14,30 +15,26 @@ namespace CCB;
  *
  * @package CCB
  */
-class Exception extends \Exception
-{
-    /**
-     * @var null
-     */
-    protected $xml;
-    /**
-     * @param null $message
-     * @param int $code
-     * @param null $xml
-     * @param Exception|null $previous
-     */
-    public function __construct($message = null, $code = 0, $xml = null, Exception $previous = null)
-    {
-        $this->xml = $xml;
-        parent::__construct($message, $code, $previous);
-    }
-    /**
-     * @return null
-     */
-    public function getXml()
-    {
-        return $this->xml;
-    }
+class Exception extends \Exception {
+	/**
+	 * @var null
+	 */
+	protected $xml;
+	/**
+	 * @param null|string $message
+	 * @param int $code
+	 * @param null $xml
+	 * @param Exception|null $previous
+	 */
+	public function __construct(
+		$message = null,
+		$code = 0,
+		$xml = null,
+		Exception $previous = null
+	) {
+		$this->xml = $xml;
+		parent::__construct($message, $code, $previous);
+	}
 }
 /**
  * Class Api
@@ -47,54 +44,62 @@ class Exception extends \Exception
  *
  * @package CCB
  */
-class Api
-{
-    protected $username, $password, $apiUri;
-    /**
-     * @param string $username
-     * @param string $password
-     * @param string $apiUri
-     */
-    public function __construct($username, $password, $apiUri)
-    {
-        $this->username = $username;
-        $this->password = $password;
-        $this->apiUri = $apiUri;
-    }
-    /**
-     * Fetch api endpoint response
-     *
-     * @param array $query
-     * @param array $data
-     * @return mixed
-     * @throws Exception
-     */
-    public function request($query=[], $data=[], $verb = 'GET')
-    {
-        if(!empty($query)){
-            $querystring = '?'.http_build_query($query);
-        }else{
-            $querystring = '';
-        }
+class Api {
 
-        if(!empty($data)){
-            $datastring = ' -d "'.http_build_query($data).'" ';
-        }else{
-            $datastring = ' -d "" ';
-        }
+	/**
+	 * Api constructor.
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param string $apiUri
+	 */
+	public function __construct(
+		protected string $username,
+		protected string $password,
+		protected string $apiUri
+	) {
+	}
 
-        $curlstring = 'curl -u '.$this->username.':'.$this->password.$datastring.'"'.$this->apiUri.$querystring.'"';
+	/**
+	 * Fetch api endpoint response
+	 *
+	 * @param array $query
+	 * @param array $data
+	 * @param string $method
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function request($query = [], $data = [], $method = 'GET') {
+		if (!empty($query)) {
+			$querystring = '?' . http_build_query($query);
+		} else {
+			$querystring = '';
+		}
+		$options = [
+			CURLOPT_URL => $this->apiUri . $querystring,
+			CURLOPT_RETURNTRANSFER => TRUE,
+			CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+			CURLOPT_USERPWD => $this->username . ":" . $this->password,
+			CURLOPT_CONNECTTIMEOUT => 120
+		];
+		if ($method == 'GET') {
+			$options[CURLOPT_HTTPGET] = 1;
+		}
+		if ($method == 'POST') {
+			$options[CURLOPT_POST] = 1;
+			$options[CURLOPT_POSTFIELDS] = http_build_query($data);
+		}
+		$ch = curl_init();
+		curl_setopt_array($ch, $options);
+		$xml = curl_exec($ch);
+		curl_close($ch);
+		$xmlObj = new \SimpleXMLElement($xml);
+		$response = $xmlObj->response;
 
-        $xml = shell_exec($curlstring);
-        $xmlObj = new \SimpleXMLElement($xml);
-        $response = $xmlObj->response;
+		if ($response->errors['count'] > 0) {
+			throw new Exception((string)$response->errors->error['error'], (int)$response->errors->error['number'], (string)$response);
+		}
 
-        /*  For Dev Purposes
-        
-        if ($response->errors['count'] > 0) {
-            throw new Exception((string)$response->errors->error['error'], (int)$response->errors->error['number'], (string)$response);
-        }
-        */
-        return $response;
-    }
+		return $response;
+	}
 }
